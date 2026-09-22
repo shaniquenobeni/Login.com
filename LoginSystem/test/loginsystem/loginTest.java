@@ -1,11 +1,23 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit5TestClass.java to edit this template
+ */
 package loginsystem;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class LoginTest {
-
-   
+/**
+ *
+ * @author ampfa
+ */
+public class loginTest {
+    
+  
     @Test
     public void testUsernameCorrectlyFormatted() {
         Login login = new Login("Kyle", "User", "kyl_1", "Ch&&sec@ke99!", "+27838968976");
@@ -101,5 +113,17 @@ public class LoginTest {
     public void testCheckCellPhoneNumberFalse() {
         Login login = new Login();
         assertFalse(login.checkCellPhoneNumber("08966553"));
+    }
+
+    private void assertTrue(boolean checkUserName) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void assertEquals(String expected, String registerUser) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void assertFalse(boolean loginUser) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
