@@ -1,129 +1,125 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit5TestClass.java to edit this template
- */
 package loginsystem;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- *
- * @author ampfa
- */
 public class loginTest {
+
+    private Login login;
+
+    @BeforeEach
+    public void setUp() {
+        login = new Login();
+    }
+
     
-  
     @Test
-    public void testUsernameCorrectlyFormatted() {
-        Login login = new Login("Kyle", "User", "kyl_1", "Ch&&sec@ke99!", "+27838968976");
-        assertTrue(login.checkUserName("kyl_1"));
-    }
-
-    @Test
-    public void testUsernameIncorrectlyFormatted() {
-        Login login = new Login();
-        login.setUsername("kyle!!!!!!");
-        String expected = "Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters in length.";
-        assertEquals(expected, login.registerUser());
+    public void testValidUsername() {
+        assertTrue(login.checkUserName("ab_cd"),
+                "Valid username must contain _ and be <= 5 chars");
     }
 
     @Test
-    public void testPasswordMeetsComplexity() {
-        Login login = new Login();
-        login.setUsername("kyl_1");
-        login.setPassword("Ch&&sec@ke99!");
-        login.setCellPhoneNumber("+27838968976");
-        assertTrue(login.checkPasswordComplexity("Ch&&sec@ke99!"));
+    public void testUsernameMissingUnderscore() {
+        assertFalse(login.checkUserName("abcde"));
     }
 
     @Test
-    public void testPasswordDoesNotMeetComplexity() {
-        Login login = new Login();
-        login.setUsername("kyl_1");
-        login.setPassword("password");
-        String expected = "Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.";
-        assertEquals(expected, login.registerUser());
+    public void testUsernameTooLong() {
+        assertFalse(login.checkUserName("abc_de"));
     }
 
     @Test
-    public void testCellPhoneCorrectlyFormatted() {
-        Login login = new Login();
-        assertTrue(login.checkCellPhoneNumber("+27838968976"));
+    public void testUsernameEmpty() {
+        assertFalse(login.checkUserName(""));
+    }
+
+    
+    @Test
+    public void testValidPassword() {
+        assertTrue(login.checkPasswordComplexity("Password1!"),
+                "Password needs 8+ chars, capital, digit, special");
     }
 
     @Test
-    public void testCellPhoneIncorrectlyFormatted() {
-        Login login = new Login();
-        login.setUsername("kyl_1");
-        login.setPassword("Ch&&sec@ke99!");
-        login.setCellPhoneNumber("08966553");
-        String expected = "Cell number is incorrectly formatted or does not contain an international code; please correct the number and try again.";
-        assertEquals(expected, login.registerUser());
-    }
-
-
-    @Test
-    public void testLoginSuccessful() {
-        Login login = new Login("Kyle", "User", "kyl_1", "Ch&&sec@ke99!", "+27838968976");
-        assertTrue(login.loginUser("kyl_1", "Ch&&sec@ke99!"));
+    public void testPasswordTooShort() {
+        assertFalse(login.checkPasswordComplexity("Pa1!"));
     }
 
     @Test
-    public void testLoginFailed() {
-        Login login = new Login("Kyle", "User", "kyl_1", "Ch&&sec@ke99!", "+27838968976");
-        assertFalse(login.loginUser("kyl_1", "wrongpassword"));
+    public void testPasswordMissingCapital() {
+        assertFalse(login.checkPasswordComplexity("password1!"));
     }
 
     @Test
-    public void testCheckUserNameTrue() {
-        Login login = new Login();
-        assertTrue(login.checkUserName("kyl_1"));
+    public void testPasswordMissingDigit() {
+        assertFalse(login.checkPasswordComplexity("Password!"));
     }
 
     @Test
-    public void testCheckUserNameFalse() {
-        Login login = new Login();
-        assertFalse(login.checkUserName("kyle!!!!!!"));
+    public void testPasswordMissingSpecialChar() {
+        assertFalse(login.checkPasswordComplexity("Password1"));
+    }
+
+    
+    @Test
+    public void testValidCellNumber() {
+        assertTrue(login.checkCellPhoneNumber("+27831234567"));
     }
 
     @Test
-    public void testCheckPasswordComplexityTrue() {
-        Login login = new Login();
-        assertTrue(login.checkPasswordComplexity("Ch&&sec@ke99!"));
+    public void testCellWithoutInternationalCode() {
+        assertFalse(login.checkCellPhoneNumber("0831234567"));
     }
 
     @Test
-    public void testCheckPasswordComplexityFalse() {
-        Login login = new Login();
-        assertFalse(login.checkPasswordComplexity("password"));
+    public void testCellEmpty() {
+        assertFalse(login.checkCellPhoneNumber(""));
+    }
+
+    
+    @Test
+    public void testSuccessfulLogin() {
+        login.setUsername("ab_cd");
+        login.setPassword("Password1!");
+        login.setFirstName("John");
+        login.setLastName("Doe");
+
+        assertTrue(login.loginUser("ab_cd", "Password1!"));
     }
 
     @Test
-    public void testCheckCellPhoneNumberTrue() {
-        Login login = new Login();
-        assertTrue(login.checkCellPhoneNumber("+27838968976"));
+    public void testLoginWrongPassword() {
+        login.setUsername("ab_cd");
+        login.setPassword("Password1!");
+
+        assertFalse(login.loginUser("ab_cd", "WrongPass1!"));
     }
 
     @Test
-    public void testCheckCellPhoneNumberFalse() {
-        Login login = new Login();
-        assertFalse(login.checkCellPhoneNumber("08966553"));
+    public void testLoginWrongUsername() {
+        login.setUsername("ab_cd");
+        login.setPassword("Password1!");
+
+        assertFalse(login.loginUser("xx_yy", "Password1!"));
     }
 
-    private void assertTrue(boolean checkUserName) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    @Test
+    public void testReturnLoginStatusSuccessContainsWelcome() {
+        login.setFirstName("John");
+        login.setLastName("Doe");
+        String status = login.returnLoginStatus(true);
+        assertTrue(status.contains("Welcome") || status.contains("John"),
+                "Success status should welcome the user");
     }
 
-    private void assertEquals(String expected, String registerUser) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    private void assertFalse(boolean loginUser) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    @Test
+    public void testReturnLoginStatusFailureMentionsFailure() {
+        String status = login.returnLoginStatus(false);
+        assertTrue(status.toLowerCase().contains("fail")
+                        || status.toLowerCase().contains("incorrect"),
+                "Failure status should indicate failed login");
     }
 }
